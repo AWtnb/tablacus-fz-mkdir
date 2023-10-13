@@ -21,7 +21,7 @@ func main() {
 }
 
 func run(c string) int {
-	names := []string{"plain", "proofed", "send_to_author", "proofed_by_author", "send_to_printshop"}
+	names := []string{"plain", "proofed", "send_to_author", "proofed_by_author", "send_to_printshop", "layout"}
 	idx, err := fuzzyfinder.Find(names, func(i int) string {
 		return names[i]
 	})
