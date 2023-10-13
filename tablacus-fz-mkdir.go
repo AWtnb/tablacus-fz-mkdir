@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/ktr0731/go-fuzzyfinder"
 )
@@ -21,7 +22,10 @@ func main() {
 }
 
 func run(c string) int {
-	names := []string{"plain", "proofed", "send_to_author", "proofed_by_author", "send_to_printshop", "layout"}
+	names := getMenu()
+	if len(names) < 1 {
+		names = []string{"plain", "proofed", "send_to_author", "proofed_by_author", "send_to_printshop", "layout"}
+	}
 	idx, err := fuzzyfinder.Find(names, func(i int) string {
 		return names[i]
 	})
@@ -47,6 +51,41 @@ func run(c string) int {
 		return 1
 	}
 	return 0
+}
+
+func readFile(path string) string {
+	if !isValidPath(path) {
+		return ""
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	return string(data)
+}
+
+func isValidPath(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
+}
+
+func getMenu() []string {
+	names := []string{}
+	p, _ := os.Executable()
+	src := filepath.Join(filepath.Dir(p), "menu.txt")
+	t := readFile(src)
+	if len(t) < 1 {
+		return names
+	}
+	for _, l := range strings.Split(t, "\n") {
+		l = strings.Trim(l, " ")
+		l = strings.Trim(l, "\r")
+		if 0 < len(l) {
+			names = append(names, l)
+		}
+	}
+	return names
 }
 
 type DirName struct {

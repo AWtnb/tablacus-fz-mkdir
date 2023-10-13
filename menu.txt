@@ -1,0 +1,6 @@
+plain
+proofed
+send_to_author
+proofed_by_author
+send_to_printshop
+layout_割付
