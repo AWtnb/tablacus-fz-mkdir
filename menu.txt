@@ -5,3 +5,7 @@ proofed_by_author
 send_to_printshop
 layout_割付
 pickup
+初校
+再校
+三校
+念校
