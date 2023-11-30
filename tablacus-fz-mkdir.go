@@ -14,15 +14,17 @@ import (
 
 func main() {
 	var (
-		cur string
+		cur  string
+		menu string
 	)
 	flag.StringVar(&cur, "cur", "", "current dir path")
+	flag.StringVar(&menu, "menu", "", "menu file path")
 	flag.Parse()
-	os.Exit(run(cur))
+	os.Exit(run(cur, menu))
 }
 
-func run(c string) int {
-	names := getMenu()
+func run(c string, menu string) int {
+	names := getMenu(menu)
 	if len(names) < 1 {
 		names = []string{"plain", "proofed", "send_to_author", "proofed_by_author", "send_to_printshop", "layout"}
 	}
@@ -70,11 +72,16 @@ func isValidPath(filename string) bool {
 	return err == nil
 }
 
-func getMenu() []string {
+func getMenu(src string) []string {
 	names := []string{}
-	p, _ := os.Executable()
-	src := filepath.Join(filepath.Dir(p), "menu.txt")
-	t := readFile(src)
+	var t string
+	if isValidPath(src) {
+		t = readFile(src)
+	} else {
+		e, _ := os.Executable()
+		p := filepath.Join(filepath.Dir(e), "menu.txt")
+		t = readFile(p)
+	}
 	if len(t) < 1 {
 		return names
 	}
