@@ -30,7 +30,7 @@ func run(c string, menu string) int {
 	}
 	idx, err := fuzzyfinder.Find(names, func(i int) string {
 		return names[i]
-	})
+	}, fuzzyfinder.WithCursorPosition(fuzzyfinder.CursorPositionTop))
 	if err != nil {
 		if err == fuzzyfinder.ErrAbort {
 			return 0
