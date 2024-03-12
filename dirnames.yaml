@@ -1,0 +1,30 @@
+- name: plain
+  aliases: []
+- name: proofed
+  aliases: []
+- name: send_to_author
+  aliases: []
+- name: proofed_by_author
+  aliases: []
+- name: send_to_printshop
+  aliases: []
+- name: layout_割付
+  aliases: []
+- name: pickup
+  aliases: []
+- name: 初校
+  aliases: [
+    shoko
+  ]
+- name: 再校
+  aliases: [
+    saiko
+  ]
+- name: 三校
+  aliases: [
+    sanko
+  ]
+- name: 念校
+  aliases: [
+    nenko
+  ]

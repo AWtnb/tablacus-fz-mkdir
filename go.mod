@@ -2,7 +2,10 @@ module github.com/AWtnb/tablacus-fz-mkdir
 
 go 1.20
 
-require github.com/ktr0731/go-fuzzyfinder v0.7.0
+require (
+	github.com/ktr0731/go-fuzzyfinder v0.7.0
+	gopkg.in/yaml.v2 v2.4.0
+)
 
 require (
 	github.com/gdamore/encoding v1.0.0 // indirect
