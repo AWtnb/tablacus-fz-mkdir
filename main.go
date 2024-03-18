@@ -31,13 +31,19 @@ func run(c string) int {
 		return 1
 	}
 
-	dn, err := dns.Select()
+	dn, inc, err := dns.Select()
 	if err != nil {
 		fmt.Println(err)
 		return 1
 	}
 
 	wd := dir.WorkDir{Path: c}
+	if !inc {
+		if err := wd.NewDir(dn); err != nil {
+			return 1
+		}
+		return 0
+	}
 	if err := wd.Scan(); err != nil {
 		fmt.Println(err)
 		return 1
