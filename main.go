@@ -7,53 +7,18 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AWtnb/tablacus-fz-mkdir/dir"
+	"github.com/AWtnb/zymd/dir"
 )
 
 func main() {
 	var (
-		cur string
+		cur    string
+		stdout bool
 	)
 	flag.StringVar(&cur, "cur", "", "current dir path")
+	flag.BoolVar(&stdout, "stdout", false, "switch to write new directory to stdout, instead of making directory")
 	flag.Parse()
-	os.Exit(run(cur))
-}
-
-func run(c string) int {
-	yp, err := findYaml(c)
-	if err != nil {
-		fmt.Println(err)
-		return 1
-	}
-	var dns dir.DirNames
-	if err := dns.Load(yp); err != nil {
-		fmt.Println(err)
-		return 1
-	}
-
-	dn, inc, err := dns.Select()
-	if err != nil {
-		fmt.Println(err)
-		return 1
-	}
-
-	wd := dir.WorkDir{Path: c}
-	if !inc {
-		if err := wd.NewDir(dn); err != nil {
-			return 1
-		}
-		return 0
-	}
-	if err := wd.Scan(); err != nil {
-		fmt.Println(err)
-		return 1
-	}
-	nn := wd.WithIndex(dn)
-	if err := wd.NewDir(nn); err != nil {
-		fmt.Println(err)
-		return 1
-	}
-	return 0
+	os.Exit(run(cur, stdout))
 }
 
 func findYaml(curPath string) (string, error) {
@@ -67,4 +32,49 @@ func findYaml(curPath string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("yaml not found")
+}
+
+func newDirName(cur string) (string, bool, error) {
+	yp, err := findYaml(cur)
+	if err != nil {
+		return "", false, err
+	}
+	var dns dir.DirNames
+	if err := dns.Load(yp); err != nil {
+		return "", false, err
+	}
+	return dns.Select()
+}
+
+func run(c string, stdout bool) int {
+
+	dn, inc, err := newDirName(c)
+	if err != nil {
+		fmt.Println(err)
+		return 1
+	}
+
+	if stdout {
+		p := filepath.Join(filepath.Dir(c), dn)
+		fmt.Print(p)
+		return 0
+	}
+
+	wd := dir.WorkDir{Path: c}
+	if !inc {
+		if err := wd.Mkdir(dn); err != nil {
+			return 1
+		}
+		return 0
+	}
+	if err := wd.Scan(); err != nil {
+		fmt.Println(err)
+		return 1
+	}
+	nn := wd.WithIndex(dn)
+	if err := wd.Mkdir(nn); err != nil {
+		fmt.Println(err)
+		return 1
+	}
+	return 0
 }

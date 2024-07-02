@@ -1,4 +1,4 @@
-module github.com/AWtnb/tablacus-fz-mkdir
+module github.com/AWtnb/zymd
 
 go 1.20
 

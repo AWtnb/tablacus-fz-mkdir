@@ -2,6 +2,7 @@ package dir
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -29,6 +30,19 @@ func getNumberPrefix(name string) string {
 		pre += c
 	}
 	return pre
+}
+
+func getPerm(path string) fs.FileMode {
+	s := string(os.PathSeparator)
+	elems := strings.Split(path, s)
+	for i := 0; i < len(elems); i++ {
+		ln := len(elems) - i
+		p := strings.Join(elems[0:ln], s)
+		if fs, err := os.Stat(p); err == nil && fs.IsDir() {
+			return fs.Mode() & os.ModePerm
+		}
+	}
+	return 0700
 }
 
 type WorkDir struct {
@@ -83,10 +97,10 @@ func (wd WorkDir) WithIndex(name string) (newname string) {
 	return
 }
 
-func (wd WorkDir) NewDir(name string) error {
+func (wd WorkDir) Mkdir(name string) error {
 	path := filepath.Join(wd.Path, name)
 	if fi, err := os.Stat(path); err == nil && fi.IsDir() {
 		return err
 	}
-	return os.Mkdir(path, os.ModePerm)
+	return os.MkdirAll(path, getPerm(path))
 }
