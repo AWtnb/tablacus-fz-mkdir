@@ -54,13 +54,23 @@ func run(c string, stdout bool) int {
 		return 1
 	}
 
+	wd := dir.WorkDir{Path: c}
+	if err := wd.Scan(); err != nil {
+		fmt.Println(err)
+		return 1
+	}
+
+	n := wd.WithIndex(dn)
+
 	if stdout {
-		p := filepath.Join(filepath.Dir(c), dn)
-		fmt.Print(p)
+		if inc {
+			fmt.Print(n)
+		} else {
+			fmt.Print(dn)
+		}
 		return 0
 	}
 
-	wd := dir.WorkDir{Path: c}
 	if !inc {
 		if err := wd.Mkdir(dn); err != nil {
 			return 1
@@ -71,8 +81,7 @@ func run(c string, stdout bool) int {
 		fmt.Println(err)
 		return 1
 	}
-	nn := wd.WithIndex(dn)
-	if err := wd.Mkdir(nn); err != nil {
+	if err := wd.Mkdir(n); err != nil {
 		fmt.Println(err)
 		return 1
 	}
